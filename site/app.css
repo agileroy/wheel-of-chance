@@ -9,6 +9,8 @@
   --accent-ink: #FFFFFF;
   --danger: #C2183F;
   --focus: #FF48B0;
+  --warning-bg: #FFF1B8;
+  --warning-ink: #5C4400;
 
   /* Encres de risographie pour les segments */
   --seg-1: #0078BF;
@@ -24,25 +26,11 @@
   --seg-text-light: #FFFFFF;
   --seg-text-dark: #1B2147;
 
-  --font: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --radius-control: 999px;
   --radius-panel: 18px;
 
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #12162E;
-    --surface: #1C2142;
-    --ink: #EEF0FA;
-    --muted: #A4ABCB;
-    --line: #313866;
-    --accent: #4DA8E8;
-    --accent-ink: #0D1130;
-    --danger: #FF7A93;
-    color-scheme: dark;
-  }
 }
 
 :root[data-theme="dark"] {
@@ -54,6 +42,8 @@
   --accent: #4DA8E8;
   --accent-ink: #0D1130;
   --danger: #FF7A93;
+  --warning-bg: #3F3410;
+  --warning-ink: #FFE58A;
   color-scheme: dark;
 }
 
@@ -77,7 +67,9 @@ a { color: inherit; }
   outline-offset: 3px;
 }
 
-#view:focus { outline: none; }
+#main:focus { outline: none; }
+[hidden] { display: none !important; }
+button { font: inherit; }
 
 .visually-hidden {
   position: absolute;
@@ -88,6 +80,40 @@ a { color: inherit; }
 }
 
 /* ---------- Barre du haut ---------- */
+.topbar-actions { display: flex; align-items: center; gap: 0.5rem; }
+
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.theme-toggle:hover { color: var(--ink); background: var(--line); }
+:root[data-theme="dark"] .icon-moon, :root:not([data-theme="dark"]) .icon-sun { display: none; }
+
+.banner {
+  max-width: 72rem;
+  margin: 0 auto 0.5rem;
+  padding: 0.625rem 1rem;
+  border-radius: 12px;
+  background: var(--warning-bg);
+  color: var(--warning-ink);
+  font-weight: 600;
+  text-align: center;
+}
+
+.status-text { color: var(--muted); font-size: 1.125rem; padding-top: 2rem; }
+.status-text.is-error { color: var(--danger); font-weight: 600; }
+
+.error { margin: 0.5rem 0 0; color: var(--danger); font-weight: 600; font-size: 0.9375rem; min-height: 0; }
+.error:empty { display: none; }
+
 .topbar {
   display: flex;
   align-items: center;
@@ -99,6 +125,7 @@ a { color: inherit; }
 }
 
 .brand {
+  white-space: nowrap;
   font-weight: 800;
   font-size: 1.375rem;
   letter-spacing: -0.02em;
@@ -307,6 +334,20 @@ input:focus { border-color: var(--ink); outline: none; }
   stroke-width: 1.2;
 }
 
+.segment path, .segment circle { fill: var(--seg-fill); }
+.segment text { fill: var(--seg-text-light); }
+.seg-1 { --seg-fill: var(--seg-1); }
+.seg-2 { --seg-fill: var(--seg-2); }
+.seg-3 { --seg-fill: var(--seg-3); }
+.seg-4 { --seg-fill: var(--seg-4); }
+.seg-5 { --seg-fill: var(--seg-5); }
+.seg-6 { --seg-fill: var(--seg-6); }
+.seg-7 { --seg-fill: var(--seg-7); }
+.seg-8 { --seg-fill: var(--seg-8); }
+.seg-9 { --seg-fill: var(--seg-9); }
+.seg-10 { --seg-fill: var(--seg-10); }
+.seg-2 text, .seg-4 text, .seg-6 text, .seg-8 text, .seg-10 text { fill: var(--seg-text-dark); }
+
 .segment text {
   font-family: var(--font);
   font-weight: 800;
@@ -447,12 +488,13 @@ dialog h2 { margin: 0 0 0.5rem; font-size: 1.5rem; line-height: 1.2; }
   color: var(--bg);
   font-weight: 600;
   transform: translate(-50%, 200%);
-  transition: transform 250ms ease;
+  transition: transform 250ms ease, visibility 250ms;
+  visibility: hidden;
   z-index: 10;
 }
 
 .toast[data-tone="error"] { background: var(--danger); color: var(--surface); }
-.toast.is-visible { transform: translate(-50%, 0); }
+.toast.is-visible { transform: translate(-50%, 0); visibility: visible; }
 
 /* ---------- Petits écrans ---------- */
 @media (max-width: 52rem) {
@@ -462,6 +504,7 @@ dialog h2 { margin: 0 0 0.5rem; font-size: 1.5rem; line-height: 1.2; }
 }
 
 @media (max-width: 30rem) {
+  .topbar nav a { padding: 0.375rem 0.5rem; }
   .add-form { flex-direction: column; }
   .member { flex-wrap: wrap; }
   .panel { padding: 0.5rem 1rem 1rem; }

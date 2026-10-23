@@ -1,0 +1,35 @@
+schema: spec-driven
+
+# Project context: constraints an agent cannot infer from the code.
+context: |
+  Rédiger tous les artefacts OpenSpec (proposal, design, specs, tasks) en français.
+  Roue de la chance pour désigner, équipe par équipe, qui anime la réunion ; dépôt public, sans publicité.
+  Accès libre, sans compte : toute personne qui a le lien peut lancer la roue et gérer les équipes.
+  Hébergement : site statique sur GitHub Pages (https://vinchou59.github.io/wheel-of-chance/), sans serveur à maintenir.
+  Temps réel : Firebase Realtime Database (offre gratuite, connexion anonyme) partage l'état des équipes entre
+  les navigateurs ; aucun autre service tiers. N'utiliser que HTTPS (port 443).
+  La base Firebase est partagée avec poker-planning (branche `room`) et matrice-competences (branche `skillMatrix`) :
+  cet outil n'écrit que sous `wheelOfChance`, et database.rules.json doit rester identique dans les trois dépôts.
+  Le VPN de l'entreprise (proxy Zscaler) bloque GitHub Pages et Firebase : utiliser l'outil hors VPN (téléphone).
+  Stack : HTML/CSS/JavaScript vanilla en modules ES, sans framework ni étape de build (dossier site/).
+  Architecture : site/js/wheel-core.js contient la logique métier pure (sans DOM ni Firebase) ;
+  site/js/wheel-store.js est le seul module qui parle à Firebase ; site/js/ui.js gère l'interface.
+  Les règles de sécurité Firebase (database.rules.json) doivent appliquer les mêmes contraintes que l'interface.
+  Interface en français. Une équipe compte une dizaine de personnes au maximum.
+  Tests : lanceur intégré de Node.js (npm test), à faire évoluer avec chaque changement de comportement ;
+  la publication GitHub Actions est bloquée si un test échoue.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always state what is out of scope
+
+# Per-operation guidance (optional)
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise

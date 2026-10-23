@@ -1,49 +1,44 @@
-# Qui anime ?
+# wheel-of-chance
 
-Roue de la chance pour désigner, équipe par équipe, qui anime la réunion.
+Roue de la chance pour désigner, équipe par équipe, qui anime la réunion. Sans publicité.
 
-- Plusieurs équipes, chacune avec sa roue et son état.
-- Après un tirage : **Retirer** la personne pour le reste du tour, ou la **Garder** (si elle est absente, par exemple). Fermer la fenêtre revient à garder.
-- Une personne retirée par erreur peut être **rétablie**.
-- Quand tout le monde est passé, la roue repart automatiquement pour un tour complet. On peut aussi recommencer le tour à la main.
-- Les équipes supprimées passent par une **corbeille**.
+**Site : https://vinchou59.github.io/wheel-of-chance/**
 
-Pas de compte : toute personne qui a le lien peut lancer la roue et gérer les équipes.
+## Fonctionnement
 
-## Démarrer
+- **Plusieurs équipes**, chacune avec sa roue et son état. Pas de compte : toute personne qui a le lien peut lancer la roue et gérer les équipes.
+- Les prénoms sont **uniques dans une équipe**, les noms d'équipe sont uniques (sans tenir compte des majuscules ni des espaces en trop).
+- **Lancer** fait tourner la roue parmi les personnes encore en lice. Ensuite :
+  - **Retirer de la roue** : la personne passe dans « Déjà passés » jusqu'à la fin du tour ;
+  - **Garder dans la roue** : rien ne change (la personne est absente, on relance). Fermer la fenêtre revient à garder.
+- **Rétablir** remet dans la roue une personne retirée par erreur.
+- Quand tout le monde est passé, la roue **repart automatiquement** pour un tour complet. **Recommencer le tour** le fait à la main.
+- Les équipes supprimées passent par une **corbeille** : restauration à l'identique, ou suppression définitive.
+- Les listes se mettent à jour **en direct** dans tous les navigateurs ouverts.
 
-Prérequis : Node.js 22 ou plus. Aucune dépendance à installer.
+## Réseau d'entreprise
 
-```bash
-npm start            # http://localhost:3000
-npm run dev          # redémarre à chaque modification
-npm test
+Le VPN de l'entreprise (proxy Zscaler) bloque GitHub Pages et Firebase : utiliser la roue hors VPN, par exemple depuis un téléphone.
+
+## Architecture
+
+Site statique (HTML/CSS/JavaScript, sans build) publié sur GitHub Pages ; l'état partagé des équipes est dans Firebase Realtime Database (connexion anonyme), sous la branche `wheelOfChance`.
+
+- `site/js/wheel-core.js` : logique métier pure (noms, tirage, écritures), testée avec Node.js ;
+- `site/js/wheel-store.js` : seul module qui parle à Firebase ;
+- `site/js/ui.js` : interface ; `site/js/app.js` : point d'entrée ; `site/js/theme.js` : thème clair ou sombre ;
+- `site/js/firebase-config.js` : configuration web Firebase (publique par nature) ;
+- `database.rules.json` : règles de sécurité de la base, à publier dans la console Firebase après chaque modification. La base est partagée avec [poker-planning](https://github.com/vinchou59/poker-planning) (branche `room`) et [matrice-competences](https://github.com/vinchou59/matrice-competences) (branche `skillMatrix`) : garder ce fichier identique dans les trois dépôts.
+
+## Développement
+
+```sh
+npm test                                          # tests de la logique métier et des règles
+python3 -m http.server 8765 --directory site      # puis http://localhost:8765
 ```
 
-Variables d'environnement :
+Chaque push sur `main` lance les tests puis publie `site/` sur GitHub Pages ; un test en échec bloque la publication.
 
-| Variable | Défaut | Rôle |
-|---|---|---|
-| `PORT` | `3000` | Port d'écoute |
-| `DATA_FILE` | `data/db.json` | Fichier où sont stockées les équipes |
+## Méthode
 
-## Docker
-
-```bash
-docker build -t wheel-of-chance .
-docker run -d -p 3000:3000 -v wheel-data:/app/data wheel-of-chance
-```
-
-Le volume garde les équipes entre deux redémarrages. Une seule instance doit tourner à la fois, puisque les données sont dans un fichier.
-
-## Organisation
-
-```
-src/store.js     logique métier et stockage dans le fichier JSON
-src/server.js    API HTTP et fichiers statiques
-public/          interface (HTML, CSS, JS sans build)
-test/            tests node:test
-openspec/        spécifications
-```
-
-Les spécifications fonctionnelles et les choix techniques sont dans `openspec/changes/add-wheel-of-chance/`.
+Le projet suit le développement piloté par les spécifications avec [OpenSpec](https://github.com/Fission-AI/OpenSpec) : `openspec/specs/` décrit le comportement attendu, `openspec/changes/` les changements en cours. Commandes Claude Code : `/opsx:explore`, `/opsx:propose`, `/opsx:apply`, `/opsx:archive`.
