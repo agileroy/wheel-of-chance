@@ -1,0 +1,9 @@
+{
+  "name": "wheel-of-chance",
+  "private": true,
+  "type": "module",
+  "description": "Roue de la chance pour désigner qui anime la réunion, équipe par équipe",
+  "scripts": {
+    "test": "node --test"
+  }
+}
