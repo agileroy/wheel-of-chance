@@ -535,3 +535,7 @@ dialog h2 { margin: 0 0 0.5rem; font-size: 1.5rem; line-height: 1.2; }
 .icon-btn:hover { background: var(--line); color: var(--ink); }
 .icon-btn-danger:hover { color: var(--danger); }
 .member .row-actions { align-items: center; flex-wrap: nowrap; }
+
+/* ---------- Son ---------- */
+.sound-toggle .icon-sound-off, .sound-toggle.is-muted .icon-sound-on { display: none; }
+.sound-toggle.is-muted .icon-sound-off { display: block; }

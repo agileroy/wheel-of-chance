@@ -4,9 +4,10 @@ import {
   teamNameConflict, createTeamUpdate, renameTeamUpdate, trashTeamUpdate, restoreTeamUpdate, purgeTeamUpdate,
   memberNameConflict, addMemberUpdate, renameMemberUpdate, removeMemberUpdate,
   pickWinner, withdrawUpdate, reinstateUpdate, resetUpdate,
-  colorIndexes, targetRotation, MESSAGES,
+  colorIndexes, targetRotation, boundariesCrossed, MESSAGES,
 } from './wheel-core.js?v=__VERSION__';
 import { launchConfetti } from './confetti.js?v=__VERSION__';
+import * as sound from './sound.js?v=__VERSION__';
 
 const $ = (id) => document.getElementById(id);
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -120,6 +121,7 @@ function showResult(name) {
     dialog.addEventListener('close', () => resolve(dialog.returnValue || 'keep'), { once: true });
     dialog.showModal();
     launchConfetti(dialog); // dans la fenêtre, pour passer au-dessus de son fond
+    sound.fanfare();
   });
 }
 
@@ -354,11 +356,37 @@ async function addMember(event) {
   }
 }
 
+/** Angle affiché (0 à 360) de la roue, lu sur la transformation en cours d'animation. */
+function displayedAngle(rotor) {
+  const matrix = new DOMMatrixReadOnly(getComputedStyle(rotor).transform);
+  return ((Math.atan2(matrix.b, matrix.a) * 180) / Math.PI + 360) % 360;
+}
+
+/** Attend la fin de l'animation en jouant un tic à chaque prénom qui passe sous le pointeur. */
+function followRotation(rotor, startRotation, count, durationMs) {
+  return new Promise((resolve) => {
+    const started = performance.now();
+    let unwrapped = startRotation;
+    let lastAngle = ((startRotation % 360) + 360) % 360;
+    const frame = (now) => {
+      const angle = displayedAngle(rotor);
+      const next = unwrapped + ((angle - lastAngle + 360) % 360);
+      if (boundariesCrossed(unwrapped, next, count) > 0) sound.tick();
+      unwrapped = next;
+      lastAngle = angle;
+      if (now - started < durationMs) requestAnimationFrame(frame);
+      else resolve();
+    };
+    requestAnimationFrame(frame);
+  });
+}
+
 async function spin() {
   const team = currentTeam();
   if (!team || wheel.spinning) return;
   const winner = pickWinner(team);
   if (!winner) return;
+  sound.unlock(); // pendant le clic : condition des navigateurs pour jouer du son
 
   wheel.spinning = true;
   $('spin').disabled = true;
@@ -369,11 +397,12 @@ async function spin() {
     drawWheel(eligible);
     const quick = reducedMotion.matches;
     const duration = quick ? 0.3 : 5;
+    const startRotation = wheel.rotation;
     wheel.rotation = targetRotation(wheel.rotation, index, eligible.length, { turns: quick ? 0 : 6 });
     const rotor = $('rotor');
     rotor.style.transitionDuration = `${duration}s`;
     rotor.style.transform = `rotate(${wheel.rotation}deg)`;
-    await new Promise((resolve) => setTimeout(resolve, duration * 1000 + 150));
+    await followRotation(rotor, startRotation, eligible.length, duration * 1000 + 150);
 
     $('wheel-live').textContent = `La roue désigne ${winner.name}.`;
     const choice = await showResult(winner.name);
@@ -508,6 +537,20 @@ export async function startApp(wheelStore) {
     raw = next;
     render();
   }, () => showFatal('Lecture des équipes refusée par la base. Vérifiez que les règles de sécurité sont publiées.'));
+
+  const soundButton = $('sound-toggle');
+  const showSoundState = () => {
+    const muted = sound.isMuted();
+    const label = muted ? 'Activer le son' : 'Couper le son';
+    soundButton.classList.toggle('is-muted', muted);
+    soundButton.setAttribute('aria-label', label);
+    soundButton.title = label;
+  };
+  soundButton.addEventListener('click', () => {
+    sound.setMuted(!sound.isMuted());
+    showSoundState();
+  });
+  showSoundState();
 
   $('team-form').addEventListener('submit', createTeam);
   $('team-input').addEventListener('input', () => { $('team-error').textContent = ''; });

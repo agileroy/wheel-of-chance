@@ -14,7 +14,7 @@ Le site SHALL être publié sur GitHub Pages, à l'adresse https://vinchou59.git
 - **THEN** le job de tests échoue et le site publié reste la version précédente
 
 ### Requirement: Interface et appareils
-L'interface SHALL être en français. Elle SHALL être utilisable sur ordinateur et sur téléphone (largeur de 360 px et plus) sans défilement horizontal, en thème clair et en thème sombre. Le site MUST NOT afficher de publicité ni charger de traceur, et MUST NOT charger de police ou de ressource depuis un autre service que Firebase.
+Le site SHALL s'appeler « Roue de la chance » (titre de l'onglet et en-tête). L'interface SHALL être en français. Elle SHALL être utilisable sur ordinateur et sur téléphone (largeur de 360 px et plus) sans défilement horizontal, en thème clair et en thème sombre. Le site MUST NOT afficher de publicité ni charger de traceur, et MUST NOT charger de police ou de ressource depuis un autre service que Firebase.
 
 #### Scenario: Affichage sur téléphone
 - **GIVEN** un téléphone de 390 px de large

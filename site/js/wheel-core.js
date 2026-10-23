@@ -251,3 +251,13 @@ export function segmentAt(rotation, count) {
   const angle = (((-rotation) % 360) + 360) % 360;
   return Math.floor(angle / (360 / count));
 }
+
+/**
+ * Nombre de séparations entre segments passées sous le pointeur quand la roue
+ * tourne de `from` à `to` degrés (rotations cumulées, sens horaire). Sert au cliquetis.
+ */
+export function boundariesCrossed(from, to, count) {
+  if (count < 2 || to <= from) return 0;
+  const slice = 360 / count;
+  return Math.floor(to / slice) - Math.floor(from / slice);
+}

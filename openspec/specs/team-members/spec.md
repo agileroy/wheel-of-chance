@@ -6,7 +6,7 @@ Ajout, renommage et suppression des membres d'une équipe, et mise à jour en di
 ## Requirements
 
 ### Requirement: Ajouter un membre
-Le site SHALL permettre d'ajouter un prénom de 1 à 50 caractères à une équipe, normalisé comme les noms d'équipe. Le couple équipe/prénom MUST être unique sans tenir compte de la casse ni des espaces en trop ; les accents restent distincts. Cette unicité MUST être appliquée aussi par les règles de sécurité du service temps réel. Un membre ajouté SHALL entrer directement dans la roue du tour en cours. Les membres SHALL être affichés dans l'ordre où ils ont été ajoutés.
+Le site SHALL permettre d'ajouter un prénom de 1 à 50 caractères à une équipe, normalisé comme les noms d'équipe. Le couple équipe/prénom MUST être unique sans tenir compte de la casse, des accents ni des espaces en trop. Cette unicité MUST être appliquée aussi par les règles de sécurité du service temps réel. Un membre ajouté SHALL entrer directement dans la roue du tour en cours. Les listes « En lice » et « Déjà passés », et les segments de la roue, SHALL être triés par ordre alphabétique, sans tenir compte de la casse ni des accents.
 
 #### Scenario: Ajout réussi
 - **WHEN** un utilisateur ajoute « Julie » à l'équipe « Produit »
@@ -22,13 +22,18 @@ Le site SHALL permettre d'ajouter un prénom de 1 à 50 caractères à une équi
 - **WHEN** un utilisateur ajoute « Julie » à l'équipe « Tech »
 - **THEN** l'ajout est accepté, et retirer Julie de la roue de « Tech » ne change rien à la roue de « Produit »
 
-#### Scenario: Accents distincts
-- **GIVEN** « Élodie » est membre de l'équipe
-- **WHEN** un utilisateur ajoute « Elodie »
-- **THEN** l'ajout est accepté
+#### Scenario: Doublon aux accents près
+- **GIVEN** « Ayé » est membre de l'équipe
+- **WHEN** un utilisateur ajoute « Aye »
+- **THEN** l'ajout est refusé avec le message « « Ayé » fait déjà partie de cette équipe. »
+
+#### Scenario: Ordre alphabétique
+- **GIVEN** l'équipe compte Zoé et Marc
+- **WHEN** un utilisateur ajoute « élodie » puis « Anna »
+- **THEN** la liste « En lice » affiche Anna, élodie, Marc, Zoé
 
 ### Requirement: Renommer un membre
-Le site SHALL permettre de corriger un prénom, avec les mêmes règles de longueur et d'unicité. Le membre MUST garder son état dans le tour en cours.
+Un pictogramme crayon, à côté de chaque prénom, SHALL permettre de corriger ce prénom, avec les mêmes règles de longueur et d'unicité. Le pictogramme SHALL avoir un libellé accessible et une infobulle « Renommer <prénom> ». Le membre MUST garder son état dans le tour en cours.
 
 #### Scenario: Correction d'une faute de frappe
 - **GIVEN** « Jluie » est déjà passée dans le tour en cours
@@ -36,7 +41,7 @@ Le site SHALL permettre de corriger un prénom, avec les mêmes règles de longu
 - **THEN** « Julie » reste dans « Déjà passés » jusqu'à la fin du tour
 
 ### Requirement: Supprimer un membre
-Le site SHALL permettre de supprimer un membre d'une équipe, après confirmation. Le membre SHALL disparaître de la roue et de la liste « Déjà passés », et son prénom SHALL redevenir disponible dans l'équipe. Si la suppression laisse des membres mais plus personne en lice, un nouveau tour SHALL commencer comme décrit dans « Fin de tour ».
+Un pictogramme poubelle, à côté de chaque prénom, SHALL permettre de supprimer ce membre de l'équipe, après confirmation. Le pictogramme SHALL avoir un libellé accessible et une infobulle « Supprimer <prénom> de l'équipe ». Le membre SHALL disparaître de la roue et de la liste « Déjà passés », et son prénom SHALL redevenir disponible dans l'équipe. Si la suppression laisse des membres mais plus personne en lice, un nouveau tour SHALL commencer comme décrit dans « Fin de tour ».
 
 #### Scenario: Départ d'un membre
 - **WHEN** un utilisateur supprime « Marc » de l'équipe « Produit » et confirme
