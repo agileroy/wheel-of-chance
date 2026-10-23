@@ -51,9 +51,13 @@ test('normalise les espaces en trop', () => {
   assert.equal(normalizeName(undefined), '');
 });
 
-test('clé d\'unicité insensible à la casse et aux espaces, accents conservés', () => {
+test('clé d\'unicité insensible à la casse, aux accents et aux espaces', () => {
   assert.equal(nameKey(' JULIE '), nameKey('julie'));
-  assert.notEqual(nameKey('Élodie'), nameKey('Elodie'));
+  assert.equal(nameKey('Anna'), nameKey('anna'));
+  assert.equal(nameKey('Ayé'), nameKey('Aye'));
+  assert.equal(nameKey('ÉLODIE'), nameKey('elodie'));
+  assert.equal(nameKey('Françoise'), nameKey('francoise'));
+  assert.notEqual(nameKey('Léa'), nameKey('Léo'));
 });
 
 test('clé utilisable par Firebase', () => {
@@ -80,7 +84,16 @@ test('sépare équipes actives et corbeille', () => {
   assert.deepEqual(buildTeamsView(null), { active: [], trash: [] });
 });
 
-test('membres triés par ordre d\'ajout, retirés à part', () => {
+test('membres triés par ordre alphabétique, sans tenir compte des accents ni de la casse', () => {
+  const raw = db();
+  const members = raw.teams.produit000001.members;
+  members.m4 = member('élodie', false, 4);
+  members.m5 = member('Zoé', false, 5);
+  members.m6 = member('Anna', false, 6);
+  assert.deepEqual(team(raw).members.map((m) => m.name), ['Anna', 'élodie', 'Julie', 'Marc', 'Sami', 'Zoé']);
+});
+
+test('membres en lice et déjà passés séparés', () => {
   const raw = apply(db(), withdrawUpdate(team(), 'm2').update);
   const t = team(raw);
   assert.deepEqual(inPlay(t).map((m) => m.name), ['Julie', 'Sami']);
@@ -98,6 +111,14 @@ test('crée une équipe et réserve son nom', () => {
 test('nom d\'équipe déjà pris, sans tenir compte de la casse', () => {
   assert.equal(teamNameConflict(db(), ' produit '), MESSAGES.teamTaken('Produit'));
   assert.equal(teamNameConflict(db(), 'Tech'), null);
+  assert.equal(teamNameConflict(db(), 'Prôduit'), MESSAGES.teamTaken('Produit'));
+});
+
+test('équipes triées par ordre alphabétique sans tenir compte des accents', () => {
+  const raw = db();
+  raw.teams.ete000000001 = { name: 'Été', createdAt: 3 };
+  raw.teams.data00000001 = { name: 'data', createdAt: 4 };
+  assert.deepEqual(buildTeamsView(raw).active.map((t) => t.name), ['data', 'Été', 'Produit']);
 });
 
 test('un nom dans la corbeille reste réservé', () => {
@@ -141,13 +162,14 @@ test('ajoute un membre en lice et réserve son prénom', () => {
   const update = addMemberUpdate('produit000001', 'm4', 'Léa');
   const t = team(apply(db(), update));
   assert.equal(byName(t, 'Léa').withdrawn, false);
-  assert.equal(update['teams/produit000001/memberNames/léa'], 'm4');
+  assert.equal(update['teams/produit000001/memberNames/lea'], 'm4');
 });
 
 test('prénom déjà pris dans l\'équipe', () => {
   assert.equal(memberNameConflict(team(), ' julie '), MESSAGES.memberTaken('Julie'));
   assert.equal(memberNameConflict(team(), 'Julie', 'm1'), null);
   assert.equal(memberNameConflict(team(), 'Léa'), null);
+  assert.equal(memberNameConflict(team(), 'Sâmi'), MESSAGES.memberTaken('Sami'));
 });
 
 test('renommer un membre garde son état dans le tour', () => {
