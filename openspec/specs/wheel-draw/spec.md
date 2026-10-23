@@ -14,11 +14,11 @@ La roue d'une équipe SHALL afficher un segment par membre en lice, avec son pr�
 - **THEN** la roue affiche Julie et Sami, et « Déjà passés » affiche Marc
 
 ### Requirement: Lancer la roue
-Le bouton « Lancer » SHALL tirer au hasard, de manière uniforme, un membre parmi ceux en lice dans l'état le plus récent reçu du service temps réel. La roue SHALL tourner plusieurs tours, puis s'arrêter avec le segment du membre tiré sous le pointeur, avant d'afficher son prénom en grand. Avec la réduction des animations activée sur l'appareil, la roue SHALL s'arrêter presque immédiatement. Pendant l'animation, le bouton « Lancer » et la gestion des membres SHALL être désactivés.
+Le bouton « Lancer » SHALL tirer au hasard, de manière uniforme, un membre parmi ceux en lice dans l'état le plus récent reçu du service temps réel. La roue SHALL tourner plusieurs tours, puis s'arrêter avec le segment du membre tiré sous le pointeur, avant d'afficher son prénom en grand, accompagné d'une pluie de confettis aux couleurs de la roue. Avec la réduction des animations activée sur l'appareil, la roue SHALL s'arrêter presque immédiatement et les confettis MUST NOT s'afficher. Les confettis MUST NOT bloquer les boutons de la fenêtre de résultat. Pendant l'animation, le bouton « Lancer » et la gestion des membres SHALL être désactivés.
 
 #### Scenario: Tirage
 - **WHEN** un utilisateur lance la roue de l'équipe « Produit »
-- **THEN** la roue tourne, s'arrête sur un membre en lice, et la fenêtre « C'est au tour de » affiche son prénom
+- **THEN** la roue tourne, s'arrête sur un membre en lice, et la fenêtre « C'est au tour de » affiche son prénom sous une pluie de confettis
 
 #### Scenario: Un seul membre en lice
 - **GIVEN** seule Julie est encore en lice
@@ -63,3 +63,16 @@ Quand une opération laisse une équipe avec des membres mais plus personne en l
 - **GIVEN** Marc et Sami sont déjà passés
 - **WHEN** un utilisateur clique sur « Recommencer le tour » et confirme
 - **THEN** tous les membres reviennent dans la roue
+
+### Requirement: Son du tirage
+Pendant la rotation, le site SHALL jouer un « tic » à chaque séparation entre deux segments qui passe sous le pointeur, en suivant le ralentissement de la roue. Quand la roue s'arrête, une courte fanfare SHALL accompagner l'affichage du résultat. Les sons SHALL être générés par le navigateur, sans fichier ni service externe. Un bouton, visible sur tous les écrans, SHALL couper ou réactiver le son ; son libellé accessible SHALL indiquer l'action (« Couper le son » ou « Activer le son »). Le son SHALL être activé par défaut, et le choix SHALL être mémorisé dans le navigateur, sans être partagé. Une fois le son coupé, le site MUST NOT jouer aucun son. Si le navigateur ne peut pas jouer de son, la roue SHALL fonctionner normalement, en silence.
+
+#### Scenario: Cliquetis pendant la rotation
+- **GIVEN** une équipe de sept personnes et le son activé
+- **WHEN** un utilisateur lance la roue
+- **THEN** des tics rapprochés se font entendre au départ, de plus en plus espacés jusqu'à l'arrêt, puis la fanfare accompagne le résultat
+
+#### Scenario: Son coupé
+- **GIVEN** l'utilisateur a cliqué sur « Couper le son »
+- **WHEN** il recharge la page puis lance la roue
+- **THEN** le bouton propose « Activer le son » et aucun son n'est joué

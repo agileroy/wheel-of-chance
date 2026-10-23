@@ -6,7 +6,7 @@ Création, renommage, liste et corbeille des équipes. Couvre l'interface, `site
 ## Requirements
 
 ### Requirement: Créer une équipe
-Le site SHALL permettre de créer une équipe avec un nom de 1 à 50 caractères. Les espaces en début et fin SHALL être retirés et les espaces multiples réduits à un seul. Le nom MUST être unique sans tenir compte de la casse ni des espaces en trop, y compris parmi les équipes dans la corbeille ; les accents restent distincts. Cette unicité MUST être appliquée aussi par les règles de sécurité du service temps réel, pas seulement par l'interface. Après la création, la roue de la nouvelle équipe SHALL s'afficher, vide.
+Le site SHALL permettre de créer une équipe avec un nom de 1 à 50 caractères. Les espaces en début et fin SHALL être retirés et les espaces multiples réduits à un seul. Le nom MUST être unique sans tenir compte de la casse, des accents ni des espaces en trop, y compris parmi les équipes dans la corbeille. Cette unicité MUST être appliquée aussi par les règles de sécurité du service temps réel, pas seulement par l'interface. Après la création, la roue de la nouvelle équipe SHALL s'afficher, vide.
 
 #### Scenario: Création réussie
 - **WHEN** un utilisateur crée l'équipe « Produit »
@@ -16,6 +16,11 @@ Le site SHALL permettre de créer une équipe avec un nom de 1 à 50 caractères
 - **GIVEN** une équipe « Produit » existe
 - **WHEN** un utilisateur crée l'équipe « produit  »
 - **THEN** la création est refusée avec le message « Une équipe « Produit » existe déjà. »
+
+#### Scenario: Nom identique aux accents près
+- **GIVEN** une équipe « Été » existe
+- **WHEN** un utilisateur crée l'équipe « ete »
+- **THEN** la création est refusée avec le message « Une équipe « Été » existe déjà. »
 
 #### Scenario: Nom réservé par une équipe de la corbeille
 - **GIVEN** l'équipe « Produit » est dans la corbeille
@@ -40,7 +45,7 @@ Le site SHALL permettre de renommer une équipe active, avec les mêmes règles 
 - **THEN** l'équipe porte le nouveau nom, Marc est toujours dans « Déjà passés », et le nom « Produit » redevient disponible
 
 ### Requirement: Lister les équipes
-La page d'accueil SHALL lister les équipes actives par ordre alphabétique, avec leur nombre de personnes, et permettre d'ouvrir la roue de chacune. La liste SHALL se mettre à jour sans recharger la page quand un autre navigateur crée, renomme ou supprime une équipe. Sans équipe, la page SHALL inviter à créer la première.
+La page d'accueil SHALL lister les équipes actives par ordre alphabétique, sans tenir compte de la casse ni des accents, avec leur nombre de personnes, et permettre d'ouvrir la roue de chacune. La liste SHALL se mettre à jour sans recharger la page quand un autre navigateur crée, renomme ou supprime une équipe. Sans équipe, la page SHALL inviter à créer la première.
 
 #### Scenario: Accès à une roue
 - **WHEN** un utilisateur sélectionne l'équipe « Produit » dans la liste

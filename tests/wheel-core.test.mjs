@@ -6,7 +6,7 @@ import {
   teamNameConflict, createTeamUpdate, renameTeamUpdate, trashTeamUpdate, restoreTeamUpdate, purgeTeamUpdate,
   memberNameConflict, addMemberUpdate, renameMemberUpdate, removeMemberUpdate,
   pickWinner, withdrawUpdate, reinstateUpdate, resetUpdate,
-  colorIndexes, targetRotation, segmentAt,
+  colorIndexes, targetRotation, segmentAt, boundariesCrossed,
 } from '../site/js/wheel-core.js';
 
 // Base simulée, au format de la branche `wheelOfChance`.
@@ -262,4 +262,13 @@ test('deux segments voisins n\'ont jamais la même couleur', () => {
     const c = colorIndexes(count);
     for (let i = 0; i < count; i++) assert.notEqual(c[i], c[(i + 1) % count], `${count} segments`);
   }
+});
+
+test('cliquetis : une séparation de segment par tic', () => {
+  assert.equal(boundariesCrossed(0, 360, 4), 4);
+  assert.equal(boundariesCrossed(10, 80, 4), 0);
+  assert.equal(boundariesCrossed(80, 100, 4), 1);
+  assert.equal(boundariesCrossed(0, 6 * 360, 10), 60);
+  assert.equal(boundariesCrossed(0, 720, 1), 0, 'une seule personne : pas de séparation');
+  assert.equal(boundariesCrossed(100, 90, 4), 0, 'jamais en arrière');
 });

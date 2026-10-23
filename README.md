@@ -8,7 +8,7 @@
 
 - **Plusieurs équipes**, chacune avec sa roue et son état. Pas de compte : toute personne qui a le lien peut lancer la roue et gérer les équipes.
 - Les prénoms sont **uniques dans une équipe**, les noms d'équipe sont uniques, sans tenir compte des majuscules, des accents ni des espaces en trop (« Ayé » et « aye » sont des doublons). Les listes sont triées par ordre alphabétique.
-- **Lancer** fait tourner la roue parmi les personnes encore en lice, et des confettis saluent la personne désignée. Ensuite :
+- **Lancer** fait tourner la roue parmi les personnes encore en lice, avec un cliquetis de roue de foire, puis une fanfare et des confettis saluent la personne désignée. Le bouton haut-parleur coupe le son (choix mémorisé dans le navigateur). Ensuite :
   - **Retirer de la roue** : la personne passe dans « Déjà passés » jusqu'à la fin du tour ;
   - **Garder dans la roue** : rien ne change (la personne est absente, on relance). Fermer la fenêtre revient à garder.
 - **Rétablir** remet dans la roue une personne retirée par erreur.
@@ -26,7 +26,7 @@ Site statique (HTML/CSS/JavaScript, sans build) publié sur GitHub Pages ; l'ét
 
 - `site/js/wheel-core.js` : logique métier pure (noms, tirage, écritures), testée avec Node.js ;
 - `site/js/wheel-store.js` : seul module qui parle à Firebase ;
-- `site/js/ui.js` : interface ; `site/js/app.js` : point d'entrée ; `site/js/theme.js` : thème clair ou sombre ; `site/js/confetti.js` : confettis (repris de poker-planning) ;
+- `site/js/ui.js` : interface ; `site/js/app.js` : point d'entrée ; `site/js/theme.js` : thème clair ou sombre ; `site/js/confetti.js` : confettis (repris de poker-planning) ; `site/js/sound.js` : cliquetis et fanfare, générés par le navigateur ;
 - `site/js/firebase-config.js` : configuration web Firebase (publique par nature) ;
 - `database.rules.json` : règles de sécurité de la base, à publier dans la console Firebase après chaque modification. La base est partagée avec [poker-planning](https://github.com/vinchou59/poker-planning) (branche `room`) et [matrice-competences](https://github.com/vinchou59/matrice-competences) (branche `skillMatrix`) : garder ce fichier identique dans les trois dépôts.
 
