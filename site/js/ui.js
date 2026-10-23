@@ -18,6 +18,7 @@ const APP_NAME = 'Roue de la chance';
 
 /** Pictogrammes des actions sur un prénom (le libellé est porté par le bouton). */
 const ICONS = {
+  passed: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/></svg>',
   edit: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M13.5 7.5l3 3"/></svg>',
   delete: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg>',
 };
@@ -268,6 +269,16 @@ function memberRow(team, m) {
       class: 'btn btn-small',
       onclick: () => save(reinstateUpdate(team.id, m.id)),
     }, 'Rétablir'));
+  }
+  if (!m.withdrawn) {
+    // Pour une personne en congés, par exemple : elle sort de la roue jusqu'au prochain tour.
+    actions.push(iconButton('passed', `Marquer ${m.name} comme déjà passé`, async () => {
+      const latest = currentTeam();
+      const member = latest?.members.find((x) => x.id === m.id);
+      if (!member || member.withdrawn) return;
+      const { update, cycleReset } = withdrawUpdate(latest, member.id);
+      if (await save(update) && cycleReset) toast(MESSAGES.cycleReset);
+    }));
   }
   actions.push(
     iconButton('edit', `Renommer ${m.name}`, async () => {
