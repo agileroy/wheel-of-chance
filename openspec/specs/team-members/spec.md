@@ -33,7 +33,7 @@ Le site SHALL permettre d'ajouter un prénom de 1 à 50 caractères à une équi
 - **THEN** la liste « En lice » affiche Anna, élodie, Marc, Zoé
 
 ### Requirement: Renommer un membre
-Un pictogramme crayon, à côté de chaque prénom, SHALL permettre de corriger ce prénom, avec les mêmes règles de longueur et d'unicité. Le pictogramme SHALL avoir un libellé accessible et une infobulle « Renommer <prénom> ». Le membre MUST garder son état dans le tour en cours.
+Un pictogramme crayon, à côté de chaque prénom, SHALL permettre de corriger ce prénom, avec les mêmes règles de longueur et d'unicité. Le pictogramme SHALL avoir le libellé accessible « Renommer <prénom> » et l'infobulle « Renommer ». L'infobulle SHALL s'afficher dès le survol de la souris ou le focus clavier, sans délai. Le membre MUST garder son état dans le tour en cours.
 
 #### Scenario: Correction d'une faute de frappe
 - **GIVEN** « Jluie » est déjà passée dans le tour en cours
@@ -41,7 +41,7 @@ Un pictogramme crayon, à côté de chaque prénom, SHALL permettre de corriger 
 - **THEN** « Julie » reste dans « Déjà passés » jusqu'à la fin du tour
 
 ### Requirement: Supprimer un membre
-Un pictogramme poubelle, à côté de chaque prénom, SHALL permettre de supprimer ce membre de l'équipe, après confirmation. Le pictogramme SHALL avoir un libellé accessible et une infobulle « Supprimer <prénom> de l'équipe ». Le membre SHALL disparaître de la roue et de la liste « Déjà passés », et son prénom SHALL redevenir disponible dans l'équipe. Si la suppression laisse des membres mais plus personne en lice, un nouveau tour SHALL commencer comme décrit dans « Fin de tour ».
+Un pictogramme poubelle, à côté de chaque prénom, SHALL permettre de supprimer ce membre de l'équipe, après confirmation. Le pictogramme SHALL avoir le libellé accessible « Supprimer <prénom> de l'équipe » et l'infobulle « Supprimer de l'équipe ». L'infobulle SHALL s'afficher dès le survol de la souris ou le focus clavier, sans délai. Le membre SHALL disparaître de la roue et de la liste « Déjà passés », et son prénom SHALL redevenir disponible dans l'équipe. Si la suppression laisse des membres mais plus personne en lice, un nouveau tour SHALL commencer comme décrit dans « Fin de tour ».
 
 #### Scenario: Départ d'un membre
 - **WHEN** un utilisateur supprime « Marc » de l'équipe « Produit » et confirme
