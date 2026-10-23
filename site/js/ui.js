@@ -6,11 +6,26 @@ import {
   pickWinner, withdrawUpdate, reinstateUpdate, resetUpdate,
   colorIndexes, targetRotation, MESSAGES,
 } from './wheel-core.js?v=__VERSION__';
+import { launchConfetti } from './confetti.js?v=__VERSION__';
 
 const $ = (id) => document.getElementById(id);
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const SAVE_FAILED = 'La modification n\'a pas été enregistrée. Vérifiez la connexion, puis réessayez.';
+
+const APP_NAME = 'Roue de la chance';
+
+/** Pictogrammes des actions sur un prénom (le libellé est porté par le bouton). */
+const ICONS = {
+  edit: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M13.5 7.5l3 3"/></svg>',
+  delete: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg>',
+};
+
+function iconButton(icon, label, onclick, extraClass = '') {
+  const button = h('button', { type: 'button', class: `icon-btn ${extraClass}`.trim(), 'aria-label': label, title: label, onclick });
+  button.innerHTML = ICONS[icon];
+  return button;
+}
 
 const SCREENS = ['screen-status', 'screen-teams', 'screen-trash', 'screen-missing', 'screen-team'];
 
@@ -104,6 +119,7 @@ function showResult(name) {
     dialog.returnValue = 'keep';
     dialog.addEventListener('close', () => resolve(dialog.returnValue || 'keep'), { once: true });
     dialog.showModal();
+    launchConfetti(dialog); // dans la fenêtre, pour passer au-dessus de son fond
   });
 }
 
@@ -252,48 +268,38 @@ function memberRow(team, m) {
     }, 'Rétablir'));
   }
   actions.push(
-    h('button', {
-      type: 'button',
-      class: 'btn btn-small btn-quiet',
-      'aria-label': `Renommer ${m.name}`,
-      onclick: async () => {
-        let name;
-        const value = await ask({
-          title: 'Renommer',
-          label: 'Prénom',
-          value: m.name,
-          ok: 'Renommer',
-          check: (input) => {
-            const checked = validateName(input, 'member');
-            if (!checked.ok) return checked.error;
-            const latest = currentTeam();
-            const conflict = latest && memberNameConflict(latest, checked.name, m.id);
-            if (conflict) return conflict;
-            name = checked.name;
-            return null;
-          },
-        });
-        const latest = currentTeam();
-        const member = latest?.members.find((x) => x.id === m.id);
-        if (value != null && member && name !== member.name) save(renameMemberUpdate(latest, member, name));
-      },
-    }, 'Renommer'),
-    h('button', {
-      type: 'button',
-      class: 'btn btn-small btn-quiet',
-      'aria-label': `Supprimer ${m.name} de l'équipe`,
-      onclick: async () => {
-        const confirmed = await ask({
-          title: `Supprimer ${m.name} de l'équipe ?`,
-          text: 'La personne disparaît de la roue et de la liste « Déjà passés ».',
-          ok: 'Supprimer',
-        });
-        const latest = currentTeam();
-        if (!confirmed || !latest) return;
-        const { update, cycleReset } = removeMemberUpdate(latest, m.id);
-        if (await save(update) && cycleReset) toast(MESSAGES.cycleReset);
-      },
-    }, 'Supprimer'),
+    iconButton('edit', `Renommer ${m.name}`, async () => {
+      let name;
+      const value = await ask({
+        title: 'Renommer',
+        label: 'Prénom',
+        value: m.name,
+        ok: 'Renommer',
+        check: (input) => {
+          const checked = validateName(input, 'member');
+          if (!checked.ok) return checked.error;
+          const latest = currentTeam();
+          const conflict = latest && memberNameConflict(latest, checked.name, m.id);
+          if (conflict) return conflict;
+          name = checked.name;
+          return null;
+        },
+      });
+      const latest = currentTeam();
+      const member = latest?.members.find((x) => x.id === m.id);
+      if (value != null && member && name !== member.name) save(renameMemberUpdate(latest, member, name));
+    }),
+    iconButton('delete', `Supprimer ${m.name} de l'équipe`, async () => {
+      const confirmed = await ask({
+        title: `Supprimer ${m.name} de l'équipe ?`,
+        text: 'La personne disparaît de la roue et de la liste « Déjà passés ».',
+        ok: 'Supprimer',
+      });
+      const latest = currentTeam();
+      if (!confirmed || !latest) return;
+      const { update, cycleReset } = removeMemberUpdate(latest, m.id);
+      if (await save(update) && cycleReset) toast(MESSAGES.cycleReset);
+    }, 'icon-btn-danger'),
   );
   return h('li', { class: 'member' }, h('span', { class: 'member-name' }, m.name), h('span', { class: 'row-actions' }, actions));
 }
@@ -302,7 +308,7 @@ function renderTeam() {
   setActiveNav(null);
   const team = currentTeam();
   if (!team) {
-    document.title = 'Qui anime ?';
+    document.title = APP_NAME;
     show('screen-missing');
     return;
   }
@@ -310,7 +316,7 @@ function renderTeam() {
   const eligible = inPlay(team);
   const passed = alreadyPassed(team);
   $('team-title').textContent = team.name;
-  document.title = `${team.name} · Qui anime ?`;
+  document.title = `${team.name} · ${APP_NAME}`;
   drawWheel(eligible);
 
   $('spin').disabled = team.members.length === 0 || wheel.spinning;
@@ -451,7 +457,7 @@ function render() {
   if (wheel.spinning) return; // la roue garde son état pendant l'animation ; rendu à la fin
   const r = route();
   if (r.name === 'team') return renderTeam();
-  document.title = 'Qui anime ?';
+  document.title = APP_NAME;
   if (r.name === 'trash') return renderTrash();
   return renderTeams();
 }

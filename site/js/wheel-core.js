@@ -25,12 +25,14 @@ export function normalizeName(raw) {
 }
 
 /**
- * Clé d'unicité d'un nom, utilisable comme clé Firebase : insensible à la casse
- * et aux espaces en trop, accents conservés. Les caractères interdits dans une clé
- * Firebase sont encodés.
+ * Clé d'unicité d'un nom, utilisable comme clé Firebase : insensible à la casse,
+ * aux accents et aux espaces en trop (« Ayé » et « aye » ont la même clé).
+ * Les caractères interdits dans une clé Firebase sont encodés.
  */
 export function nameKey(raw) {
   return normalizeName(raw)
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
     .toLocaleLowerCase('fr-FR')
     .replace(/[.#$[\]/%\u0000-\u001f\u007f]/g, (char) =>
       '%' + char.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0'));
@@ -65,8 +67,11 @@ function cryptoRandom() {
 
 // ---------------------------------------------------------------- Lecture
 
-function byCreation(a, b) {
-  return (a.createdAt ?? 0) - (b.createdAt ?? 0) || a.id.localeCompare(b.id);
+const collator = new Intl.Collator('fr', { sensitivity: 'base', numeric: true });
+
+/** Ordre alphabétique (sans tenir compte de la casse ni des accents), puis ordre d'ajout. */
+function byName(a, b) {
+  return collator.compare(a.name, b.name) || (a.createdAt ?? 0) - (b.createdAt ?? 0) || a.id.localeCompare(b.id);
 }
 
 function toTeam(id, raw) {
@@ -77,7 +82,7 @@ function toTeam(id, raw) {
       withdrawn: m?.withdrawn === true,
       createdAt: m?.createdAt ?? 0,
     }))
-    .sort(byCreation);
+    .sort(byName);
   return {
     id,
     name: String(raw?.name ?? ''),
@@ -91,8 +96,7 @@ function toTeam(id, raw) {
 export function buildTeamsView(raw) {
   const teams = Object.entries(raw?.teams ?? {}).map(([id, t]) => toTeam(id, t));
   return {
-    active: teams.filter((t) => t.deletedAt === null)
-      .sort((a, b) => a.name.localeCompare(b.name, 'fr')),
+    active: teams.filter((t) => t.deletedAt === null).sort(byName),
     trash: teams.filter((t) => t.deletedAt !== null)
       .sort((a, b) => b.deletedAt - a.deletedAt),
   };
@@ -110,12 +114,14 @@ export const alreadyPassed = (team) => team.members.filter((m) => m.withdrawn);
 
 /** Message d'erreur si le nom est déjà pris par une autre équipe (corbeille comprise), sinon null. */
 export function teamNameConflict(raw, name, exceptId = null) {
+  // Comparaison sur les noms eux-mêmes : couvre aussi les équipes dont la réservation
+  // a été écrite avant le changement de clé (accents alors distincts).
   const key = nameKey(name);
-  const owner = raw?.teamNames?.[key];
-  if (!owner || owner === exceptId) return null;
-  const team = findTeam(raw, owner);
-  if (!team) return null; // entrée orpheline : la base tranchera
-  return team.deletedAt === null ? MESSAGES.teamTaken(team.name) : MESSAGES.teamTakenInTrash(team.name);
+  const taken = Object.entries(raw?.teams ?? {})
+    .map(([id, t]) => toTeam(id, t))
+    .find((t) => t.id !== exceptId && nameKey(t.name) === key);
+  if (!taken) return null;
+  return taken.deletedAt === null ? MESSAGES.teamTaken(taken.name) : MESSAGES.teamTakenInTrash(taken.name);
 }
 
 export function createTeamUpdate(teamId, name) {

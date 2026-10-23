@@ -23,5 +23,5 @@
 ## 5. Qualité
 - [x] 5.1 Tests de la logique métier et de la couverture des règles (`npm test`)
 - [x] 5.2 Vérification visuelle avec une base simulée : bureau, téléphone, thème sombre, 1 à 11 membres
-- [ ] 5.3 Publier les règles dans la console Firebase et les recopier dans poker-planning et matrice-competences
-- [ ] 5.4 Vérifier sur le site publié : création, tirage, corbeille, et refus d'un doublon par la base
+- [x] 5.3 Publier les règles dans la console Firebase et les recopier dans poker-planning et matrice-competences
+- [x] 5.4 Vérifier sur le site publié : création, tirage, corbeille, et refus d'un doublon par la base
