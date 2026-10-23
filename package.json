@@ -1,0 +1,15 @@
+{
+  "name": "wheel-of-chance",
+  "version": "1.0.0",
+  "description": "Roue de la chance pour désigner qui anime la réunion, équipe par équipe.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/*.test.js"
+  }
+}
