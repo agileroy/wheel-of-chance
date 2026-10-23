@@ -23,8 +23,12 @@ const ICONS = {
   delete: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/></svg>',
 };
 
-function iconButton(icon, label, onclick, extraClass = '') {
-  const button = h('button', { type: 'button', class: `icon-btn ${extraClass}`.trim(), 'aria-label': label, title: label, onclick });
+/**
+ * Bouton pictogramme. `label` est lu par les lecteurs d'écran ; `tip` s'affiche
+ * en infobulle au survol et au clavier (sans le délai de l'infobulle native).
+ */
+function iconButton(icon, label, tip, onclick, extraClass = '') {
+  const button = h('button', { type: 'button', class: `icon-btn ${extraClass}`.trim(), 'aria-label': label, 'data-tip': tip, onclick });
   button.innerHTML = ICONS[icon];
   return button;
 }
@@ -272,7 +276,8 @@ function memberRow(team, m) {
   }
   if (!m.withdrawn) {
     // Pour une personne en congés, par exemple : elle sort de la roue jusqu'au prochain tour.
-    actions.push(iconButton('passed', `Marquer ${m.name} comme déjà passé`, async () => {
+    actions.push(iconButton('passed', `Marquer ${m.name} comme déjà passé`,
+      'Déjà passé : sort de la roue jusqu\'au prochain tour (congés, absence…)', async () => {
       const latest = currentTeam();
       const member = latest?.members.find((x) => x.id === m.id);
       if (!member || member.withdrawn) return;
@@ -281,7 +286,7 @@ function memberRow(team, m) {
     }));
   }
   actions.push(
-    iconButton('edit', `Renommer ${m.name}`, async () => {
+    iconButton('edit', `Renommer ${m.name}`, 'Renommer', async () => {
       let name;
       const value = await ask({
         title: 'Renommer',
@@ -302,7 +307,7 @@ function memberRow(team, m) {
       const member = latest?.members.find((x) => x.id === m.id);
       if (value != null && member && name !== member.name) save(renameMemberUpdate(latest, member, name));
     }),
-    iconButton('delete', `Supprimer ${m.name} de l'équipe`, async () => {
+    iconButton('delete', `Supprimer ${m.name} de l'équipe`, 'Supprimer de l\'équipe', async () => {
       const confirmed = await ask({
         title: `Supprimer ${m.name} de l'équipe ?`,
         text: 'La personne disparaît de la roue et de la liste « Déjà passés ».',
