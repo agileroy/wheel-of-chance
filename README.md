@@ -29,7 +29,7 @@ Site statique (HTML/CSS/JavaScript, sans build) publié sur GitHub Pages ; l'ét
 - `site/js/wheel-store.js` : seul module qui parle à Firebase ;
 - `site/js/ui.js` : interface ; `site/js/app.js` : point d'entrée ; `site/js/theme.js` : thème clair ou sombre ; `site/js/confetti.js` : confettis (repris de poker-planning) ; `site/js/sound.js` : cliquetis et fanfare, générés par le navigateur ;
 - `site/js/firebase-config.js` : configuration web Firebase (publique par nature) ;
-- `database.rules.json` : règles de sécurité de la base, à publier dans la console Firebase après chaque modification. La base est partagée avec [poker-planning](https://github.com/vinchou59/poker-planning) (branche `room`) et [matrice-competences](https://github.com/vinchou59/matrice-competences) (branche `skillMatrix`) : garder ce fichier identique dans les trois dépôts.
+- `database.rules.json` : règles de sécurité de la base, à publier dans la console Firebase après chaque modification. La base est partagée avec [poker-planning](https://github.com/vinchou59/poker-planning) (branche `room`) [matrice-competences](https://github.com/vinchou59/matrice-competences) (branche `skillMatrix`) et [moving-motivators](https://github.com/vinchou59/moving-motivators) (branche `movingMotivators`) : garder ce fichier identique dans les quatre dépôts.
 
 ## Développement
 
