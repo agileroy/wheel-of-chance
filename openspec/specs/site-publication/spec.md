@@ -6,7 +6,7 @@ Publication sur GitHub Pages, interface (langue, appareils, thème), connexion a
 ## Requirements
 
 ### Requirement: Publication automatique
-Le site SHALL être publié sur GitHub Pages, à l'adresse https://vinchou59.github.io/wheel-of-chance/, à chaque push sur `main`. Les tests automatiques SHALL être lancés avant la publication, et la publication MUST NOT avoir lieu si un test échoue. Les tests SHALL aussi être lancés sur chaque pull request, sans publication. Les fichiers publiés SHALL être versionnés pour qu'une mise à jour ne serve pas d'anciens styles ou scripts en cache.
+Le site SHALL être publié sur GitHub Pages, à l'adresse https://agileroy.github.io/wheel-of-chance/, à chaque push sur `main`. Les tests automatiques SHALL être lancés avant la publication, et la publication MUST NOT avoir lieu si un test échoue. Les tests SHALL aussi être lancés sur chaque pull request, sans publication. Les fichiers publiés SHALL être versionnés pour qu'une mise à jour ne serve pas d'anciens styles ou scripts en cache.
 
 #### Scenario: Test en échec
 - **GIVEN** un push sur `main` qui casse un test

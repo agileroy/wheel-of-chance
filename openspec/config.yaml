@@ -5,7 +5,7 @@ context: |
   Rédiger tous les artefacts OpenSpec (proposal, design, specs, tasks) en français.
   Roue de la chance pour désigner, équipe par équipe, qui anime la réunion ; dépôt public, sans publicité.
   Accès libre, sans compte : toute personne qui a le lien peut lancer la roue et gérer les équipes.
-  Hébergement : site statique sur GitHub Pages (https://vinchou59.github.io/wheel-of-chance/), sans serveur à maintenir.
+  Hébergement : site statique sur GitHub Pages (https://agileroy.github.io/wheel-of-chance/), sans serveur à maintenir.
   Temps réel : Firebase Realtime Database (offre gratuite, connexion anonyme) partage l'état des équipes entre
   les navigateurs ; aucun autre service tiers. N'utiliser que HTTPS (port 443).
   La base Firebase est partagée avec poker-planning (branche `room`) et matrice-competences (branche `skillMatrix`) :
