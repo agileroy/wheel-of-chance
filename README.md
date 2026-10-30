@@ -29,7 +29,7 @@ Site statique (HTML/CSS/JavaScript, sans build) publié sur GitHub Pages ; l'ét
 - `site/js/wheel-store.js` : seul module qui parle à Firebase ;
 - `site/js/ui.js` : interface ; `site/js/app.js` : point d'entrée ; `site/js/theme.js` : thème clair ou sombre ; `site/js/confetti.js` : confettis (repris de poker-planning) ; `site/js/sound.js` : cliquetis et fanfare, générés par le navigateur ;
 - `site/js/firebase-config.js` : configuration web Firebase (publique par nature) ;
-- `database.rules.json` : règles de sécurité de la base, à publier dans la console Firebase après chaque modification. La base est partagée avec [poker-planning](https://github.com/agileroy/poker-planning) (branche `room`) [matrice-competences](https://github.com/agileroy/matrice-competences) (branche `skillMatrix`) et [moving-motivators](https://github.com/agileroy/moving-motivators) (branche `movingMotivators`) : garder ce fichier identique dans les quatre dépôts.
+- `database.rules.json` : règles de sécurité de la base, à publier dans la console Firebase après chaque modification. La base est partagée avec [poker-planning](https://github.com/agileroy/poker-planning) (branche `room`) [matrice-competences](https://github.com/agileroy/matrice-competences) (branche `skillMatrix`) [moving-motivators](https://github.com/agileroy/moving-motivators) (branche `movingMotivators`) et [roles-responsabilites](https://github.com/agileroy/roles-responsabilites) (branche `rolesGame`) : garder ce fichier identique dans les cinq dépôts.
 
 ## Développement
 
