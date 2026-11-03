@@ -29,7 +29,7 @@ Site statique (HTML/CSS/JavaScript, sans build) publié sur GitHub Pages ; l'ét
 - `site/js/wheel-store.js` : seul module qui parle à Firebase ;
 - `site/js/ui.js` : interface ; `site/js/app.js` : point d'entrée ; `site/js/theme.js` : thème clair ou sombre ; `site/js/confetti.js` : confettis (repris de poker-planning) ; `site/js/sound.js` : cliquetis et fanfare, générés par le navigateur ;
 - `site/js/firebase-config.js` : configuration web Firebase (publique par nature) ;
-- `database.rules.json` : règles de sécurité de la base, à publier dans la console Firebase après chaque modification. La base est partagée avec [poker-planning](https://github.com/agileroy/poker-planning) (branche `room`) [matrice-competences](https://github.com/agileroy/matrice-competences) (branche `skillMatrix`) [moving-motivators](https://github.com/agileroy/moving-motivators) (branche `movingMotivators`) et [roles-responsabilites](https://github.com/agileroy/roles-responsabilites) (branche `rolesGame`) : garder ce fichier identique dans les cinq dépôts.
+- `database.rules.json` : règles de sécurité de la base, limitées à la branche `wheelOfChance`, dans le projet Firebase propre à la roue (`wheel-of-chance-vleroy`, désigné par `firebase.json` et `.firebaserc`). Elles sont publiées automatiquement à chaque push sur `main`, après les tests, par le job `rules` du workflow (Firebase CLI avec le compte de service du secret `FIREBASE_SERVICE_ACCOUNT`) ; sans ce secret, le job est sauté avec un avertissement et les règles sont à publier à la main dans la console Firebase.
 
 ## Développement
 
@@ -38,7 +38,7 @@ npm test                                          # tests de la logique métier 
 python3 -m http.server 8765 --directory site      # puis http://localhost:8765
 ```
 
-Chaque push sur `main` lance les tests puis publie `site/` sur GitHub Pages ; un test en échec bloque la publication.
+Chaque push sur `main` lance les tests, publie les règles Firebase puis publie `site/` sur GitHub Pages ; un test en échec bloque les deux publications.
 
 ## Méthode
 

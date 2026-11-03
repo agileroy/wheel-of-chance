@@ -8,8 +8,9 @@ context: |
   Hébergement : site statique sur GitHub Pages (https://agileroy.github.io/wheel-of-chance/), sans serveur à maintenir.
   Temps réel : Firebase Realtime Database (offre gratuite, connexion anonyme) partage l'état des équipes entre
   les navigateurs ; aucun autre service tiers. N'utiliser que HTTPS (port 443).
-  La base Firebase est partagée avec poker-planning (branche `room`) et matrice-competences (branche `skillMatrix`) :
-  cet outil n'écrit que sous `wheelOfChance`, et database.rules.json doit rester identique dans les trois dépôts.
+  Projet Firebase dédié (wheel-of-chance-vleroy, aucun autre outil ne l'utilise) : cet outil n'écrit que sous
+  `wheelOfChance` ; database.rules.json ne contient que cette branche et est publié automatiquement par GitHub
+  Actions après les tests (secret FIREBASE_SERVICE_ACCOUNT).
   Le VPN de l'entreprise (proxy Zscaler) bloque GitHub Pages et Firebase : utiliser l'outil hors VPN (téléphone).
   Stack : HTML/CSS/JavaScript vanilla en modules ES, sans framework ni étape de build (dossier site/).
   Architecture : site/js/wheel-core.js contient la logique métier pure (sans DOM ni Firebase) ;

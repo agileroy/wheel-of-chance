@@ -40,11 +40,18 @@ function hasWriteRule(path) {
   return false;
 }
 
-test('le fichier de règles garde les branches des autres outils', () => {
-  assert.ok(rules.room, 'poker planning');
-  assert.ok(rules.skillMatrix, 'matrice de compétences');
+test('projet dédié : le fichier ne contient que la branche wheelOfChance, tout le reste est fermé', () => {
+  assert.deepEqual(Object.keys(rules).sort(), ['.read', '.write', 'wheelOfChance']);
   assert.equal(rules['.read'], false);
   assert.equal(rules['.write'], false);
+});
+
+test('firebase.json et .firebaserc publient ce fichier dans le projet de la roue', async () => {
+  const { readFile: read } = await import('node:fs/promises');
+  const config = JSON.parse(await read(new URL('../firebase.json', import.meta.url), 'utf8'));
+  assert.deepEqual(config, { database: { rules: 'database.rules.json' } });
+  const rc = JSON.parse(await read(new URL('../.firebaserc', import.meta.url), 'utf8'));
+  assert.equal(rc.projects.default, 'wheel-of-chance-vleroy');
 });
 
 test('la roue est lisible par tout navigateur connecté, et seulement lui', () => {
